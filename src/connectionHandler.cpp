@@ -32,11 +32,13 @@ bool ConnectionHandler::connect() {
 }
 
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
-    cout<< "starting getting bytes";
+    cout<< "starting getting bytes"<<endl;
     size_t tmp = 0;
     boost::system::error_code error;
     try {
         while (!error && bytesToRead > tmp ) {
+            int i =0;
+            cout << i << endl;
             tmp += socket_.read_some(boost::asio::buffer(bytes+tmp, bytesToRead-tmp), error);
         }
         if(error)
@@ -89,53 +91,51 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
 
             return false;
         }
-        cout<< ch<< endl;
-//        if(ch!='\0'){
-            cout<< "4" << endl;
-
-            op_code = bytesToShort(&ch);
-            frame.append(2, ch);
-            cout<<frame<<endl;
-//        }
+        cout<< "4 " << op_code << endl;
+        op_code = bytesToShort(&ch);
+        cout<<op_code<<endl;
         if (op_code==13){
             cout<< "5" << endl;
             frame.append("ERROR ");
             cout<< frame << endl;
-            if(!getBytes(&ch, 2))
+            cout<< "shayke habozeah" << endl;
+            char ch2;
+            if(!getBytes(&ch2, 2))
             {
                 cout<< "6" << endl;
 
                 return false;
             }
-            short message = bytesToShort(&ch);
+            short message = bytesToShort(&ch2);
             frame.append(std::to_string(message));
+            cout<<message<<endl;
+            cout<<frame<<endl;
         } else{
             cout<< "7" << endl;
-
+            char ch2;
             frame.append("ACK ");
-            if(!getBytes(&ch, 2))
+            if(!getBytes(&ch2, 2))
             {
                 cout<< "8" << endl;
 
                 return false;
             }
-            short message = bytesToShort(&ch);
+            short message = bytesToShort(&ch2);
             frame.append(std::to_string(message)+" ");
+            do{
+                cout<<"meleh"<<endl;
+                if(!getBytes(&ch, 1))
+                {
+                    cout<< "9" << endl;
+                    return false;
+                }
+                if(ch!='\0'){
+                    cout<< "10" << endl;
+                    frame.append(1, ch);
+                }
+                cout<< "11" << endl;
+            }while (delimiter != ch);
         }
-        do{
-            if(!getBytes(&ch, 1))
-            {
-                cout<< "9" << endl;
-
-                return false;
-            }
-            if(ch!='\0'){
-                cout<< "10" << endl;
-
-                frame.append(1, ch);
-            }
-            cout<< "11" << endl;
-        }while (delimiter != ch);
     } catch (std::exception& e) {
         std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
         return false;
@@ -151,6 +151,8 @@ bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter)
     char message[size];
     for (int i = 0; i < size; ++i) {
         message[i]= msg[i];
+        cout<<msg[i]<<endl;
+
     }
     bool result=sendBytes(message,size);
     if(!result)

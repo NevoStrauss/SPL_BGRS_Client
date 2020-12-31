@@ -3,7 +3,9 @@
                                            
 #include <string>
 #include <iostream>
+#include <vector>
 #include <boost/asio.hpp>
+using namespace std;
 
 using boost::asio::ip::tcp;
 
@@ -47,6 +49,36 @@ public:
 	
     // Close down the connection properly.
     void close();
+
+    static short bytesToShort(char* bytesArr);
+
+    static void shortToBytes(short num, char* bytesArr);
+
+    vector<char> adminReg(const std::string& message);
+
+    vector<char> studentReg(const std::string& message);
+
+    vector<char> login(const std::string& message);
+
+    vector<char> logout(const std::string& message);
+
+    vector<char> courseReg(const std::string& message);
+
+    vector<char> kdamCheck(const std::string& message);
+
+    vector<char> courseStat(const std::string& message);
+
+    vector<char> studentStat(const std::string& message);
+
+    vector<char> isRegistered(const std::string& message);
+
+    vector<char> unRegistered(const std::string& message);
+
+    vector<char> myCourses(const std::string& message);
+
+    vector<char> whichOPCODE(std::string& op_code, const std::string& message);
+
+    vector<char> messageToByte  (const std::string& message);
  
 }; //class ConnectionHandler
  

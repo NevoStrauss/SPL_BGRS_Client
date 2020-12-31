@@ -1,4 +1,4 @@
-#include <connectionHandler.h>
+#include "../include/connectionHandler.h"
 using boost::asio::ip::tcp;
 
 using std::cin;
@@ -32,6 +32,7 @@ bool ConnectionHandler::connect() {
 }
 
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
+    cout<< "starting getting bytes";
     size_t tmp = 0;
     boost::system::error_code error;
     try {
@@ -64,6 +65,7 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
 }
 
 bool ConnectionHandler::getLine(std::string& line) {
+    cout<< "trying get message" << endl;
     return getFrameAscii(line, '\n');
 }
 
@@ -73,31 +75,48 @@ bool ConnectionHandler::sendLine(std::string& line) {
 
 
 bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
+    cout<< "1" << endl;
     char ch;
     // Stop when we encounter the null character.
     // Notice that the null character is not appended to the frame string.
     try {
+        cout<< "2" << endl;
+
         short op_code = 0;
         if(!getBytes(&ch, 2))
         {
+            cout<< "3" << endl;
+
             return false;
         }
-        if(ch!='\0'){
+        cout<< ch<< endl;
+//        if(ch!='\0'){
+            cout<< "4" << endl;
+
             op_code = bytesToShort(&ch);
-            frame.append(1, ch);
-        }
+            frame.append(2, ch);
+            cout<<frame<<endl;
+//        }
         if (op_code==13){
+            cout<< "5" << endl;
             frame.append("ERROR ");
+            cout<< frame << endl;
             if(!getBytes(&ch, 2))
             {
+                cout<< "6" << endl;
+
                 return false;
             }
             short message = bytesToShort(&ch);
             frame.append(std::to_string(message));
         } else{
+            cout<< "7" << endl;
+
             frame.append("ACK ");
             if(!getBytes(&ch, 2))
             {
+                cout<< "8" << endl;
+
                 return false;
             }
             short message = bytesToShort(&ch);
@@ -106,16 +125,22 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
         do{
             if(!getBytes(&ch, 1))
             {
+                cout<< "9" << endl;
+
                 return false;
             }
             if(ch!='\0'){
+                cout<< "10" << endl;
+
                 frame.append(1, ch);
             }
+            cout<< "11" << endl;
         }while (delimiter != ch);
     } catch (std::exception& e) {
         std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
         return false;
     }
+    cout<< "got " << frame << endl;
     return true;
 }
 

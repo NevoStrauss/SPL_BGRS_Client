@@ -18,6 +18,7 @@ private:
 
 public:
     ConnectionHandler(std::string host, short port);
+    ConnectionHandler(const ConnectionHandler& connectionHandler);
     virtual ~ConnectionHandler();
 
     // Connect to the remote machine
@@ -49,6 +50,14 @@ public:
 
     // Close down the connection properly.
     void close();
+
+    const string& getHost() const;
+
+    const short& getPort() const;
+
+    const boost::asio::io_service& getIOService() const;
+
+    const tcp::socket& getSocket() const;
 
 private:
     short ADMINREG = 1;

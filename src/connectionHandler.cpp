@@ -310,3 +310,19 @@ bool ConnectionHandler::continueProcess(std::string &frame) {
     }while (ch[0] != '\0');
     return true;
 }
+
+const boost::asio::io_service& ConnectionHandler::getIOService() const{
+    return io_service_;
+}
+
+const string &ConnectionHandler::getHost() const{
+    return host_;
+}
+
+const short &ConnectionHandler::getPort() const{
+    return port_;
+}
+
+const tcp::socket &ConnectionHandler::getSocket() const{
+    return socket_;
+}

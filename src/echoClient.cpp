@@ -25,11 +25,11 @@ int main (int argc, char *argv[]) {
         char buf[bufsize];
         std::cin.getline(buf, bufsize);
 		std::string line(buf);
-		int len=line.length();
         if (!connectionHandler.sendLine(line)) {
             std::cout << "Disconnected. Exiting...\n" << std::endl;
             break;
         }
+        cout << "Succeeded sending message" << endl;
 		// connectionHandler.sendLine(line) appends '\n' to the message. Therefore we send len+1 bytes.
         // std::cout << "Sent " << len+1 << " bytes to server" << std::endl;
 

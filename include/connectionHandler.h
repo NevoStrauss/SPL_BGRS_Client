@@ -41,56 +41,14 @@ public:
 
     // Get Ascii data from the server until the delimiter character
     // Returns false in case connection closed before null can be read.
-    bool getFrameAscii(std::string& frame, char delimiter);
+    bool getFrameUTF8(std::string& frame, char delimiter);
 
     // Send a message to the remote host.
     // Returns false in case connection is closed before all the data is sent.
-    bool sendFrameAscii(const std::string& frame, char delimiter);
+    bool sendFrameUTF8(const std::string& frame, char delimiter);
 
     // Close down the connection properly.
     void close();
-
-    static short bytesToShort(char* bytesArr);
-
-    static void shortToBytes(short num, char* bytesArr);
-
-    vector<char> adminReg(vector<string>& message);
-
-    vector<char> studentReg(vector<string>& message);
-
-    vector<char> login(vector<string>& message);
-
-    vector<char> logout(vector<string>& message);
-
-    vector<char> courseReg(vector<string>& message);
-
-    vector<char> kdamCheck(vector<string>& message);
-
-    vector<char> courseStat(vector<string>& message);
-
-    vector<char> studentStat(vector<string>& message);
-
-    vector<char> isRegistered(vector<string>& message);
-
-    vector<char> unRegistered(vector<string>& message);
-
-    vector<char> myCourses(vector<string>& message);
-
-    vector<char> whichOPCODE(vector<string>& message);
-
-    vector<char> createMsg2args(vector<string>& message, short OP_CODE);
-
-    vector<char> createMsg1arg(vector<string>& message, short OP_CODE);
-
-    vector<char> encodeMessage  (vector<string> msgToEncode);
-
-    bool decodeError(std::string& frame);
-
-    bool decodeAck(std::string& frame);
-
-    bool continueProcess(std::string& frame);
-
-
 
 private:
     short ADMINREG = 1;
@@ -106,6 +64,27 @@ private:
     short MYCOURSES = 11;
     short ACK = 12;
     short ERROR = 13;
+
+    static short bytesToShort(char* bytesArr);
+    static void shortToBytes(short num, char* bytesArr);
+    vector<char> adminReg(vector<string>& message);
+    vector<char> studentReg(vector<string>& message);
+    vector<char> login(vector<string>& message);
+    vector<char> logout(vector<string>& message);
+    vector<char> courseReg(vector<string>& message);
+    vector<char> kdamCheck(vector<string>& message);
+    vector<char> courseStat(vector<string>& message);
+    vector<char> studentStat(vector<string>& message);
+    vector<char> isRegistered(vector<string>& message);
+    vector<char> unRegistered(vector<string>& message);
+    vector<char> myCourses(vector<string>& message);
+    vector<char> whichOPCODE(vector<string>& message);
+    vector<char> createMsg2args(vector<string>& message, short OP_CODE);
+    vector<char> createMsg1arg(vector<string>& message, short OP_CODE);
+    vector<char> encodeMessage  (vector<string> msgToEncode);
+    bool decodeError(std::string& frame);
+    bool decodeAck(std::string& frame);
+    bool continueProcess(std::string& frame);
 
 }; //class ConnectionHandler
 

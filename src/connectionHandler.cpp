@@ -34,13 +34,11 @@ bool ConnectionHandler::connect() {
 }
 
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
-    cout<< "starting getting bytes"<<endl;
     size_t tmp = 0;
     boost::system::error_code error;
     try {
         while (!error && bytesToRead > tmp ) {
             int i =0;
-            cout << i << endl;
             tmp += socket_.read_some(boost::asio::buffer(bytes+tmp, bytesToRead-tmp), error);
         }
         if(error)
@@ -69,59 +67,27 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
 }
 
 bool ConnectionHandler::getLine(std::string& line) {
-    cout<< "trying get message" << endl;
-    return getFrameAscii(line, '\n');
+    return getFrameUTF8(line, '\n');
 }
 
 bool ConnectionHandler::sendLine(std::string& line) {
-    return sendFrameAscii(line, ' ');
+    return sendFrameUTF8(line, ' ');
 }
 
-bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
-    cout<< "1" << endl;
+bool ConnectionHandler::getFrameUTF8(std::string& frame, char delimiter) {
     char ch[2];
-    // Stop when we encounter the null character.
-    // Notice that the null character is not appended to the frame string.
     try {
-        cout<< "2" << endl;
 
-        short op_code = 0;
+        short op_code;
         if(!getBytes(ch, 2))
         {
-            cout<< "3" << endl;
             return false;
         }
-        cout<< "4 "  << endl;
         op_code = bytesToShort(ch);
-        cout<<op_code<<endl;
         if (op_code==13){
             return decodeError(frame);
         } else{
             return decodeAck(frame);
-//            cout<< "7" << endl;
-//            char ch2;
-//            frame.append("ACK ");
-//            if(!getBytes(&ch2, 2))
-//            {
-//                cout<< "8" << endl;
-//
-//                return false;
-//            }
-//            short message = bytesToShort(&ch2);
-//            frame.append(std::to_string(message)+" ");
-//            do{
-//                cout<<"meleh"<<endl;
-//                if(!getBytes(&ch, 1))
-//                {
-//                    cout<< "9" << endl;
-//                    return false;
-//                }
-//                if(ch!='\0'){
-//                    cout<< "10" << endl;
-//                    frame.append(1, ch);
-//                }
-//                cout<< "11" << endl;
-//            }while (delimiter != ch);
         }
     } catch (std::exception& e) {
         std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
@@ -129,7 +95,7 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
     }
 }
 
-bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter) {
+bool ConnectionHandler::sendFrameUTF8(const std::string& frame, char delimiter) {
     vector<string> msgToEncode;
     string separator(1,delimiter);
     boost::split(msgToEncode, frame, boost::is_any_of(separator));
@@ -138,8 +104,6 @@ bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter)
     char message[size];
     for (int i = 0; i < size; ++i) {
         message[i]= msg[i];
-        cout<<msg[i]<<endl;
-
     }
     bool result=sendBytes(message,size);
     if(!result)
@@ -283,7 +247,7 @@ vector<char> ConnectionHandler::whichOPCODE(vector<string>& message) {
         return studentStat(message);
     else if (op_code == "ISREGISTERED")
         return isRegistered(message);
-    else if (op_code == "UNREGISTERED")
+    else if (op_code == "UNREGISTER")
         return unRegistered(message);
     else if (op_code == "MYCOURSES")
         return myCourses(message);
@@ -296,7 +260,7 @@ vector<char> ConnectionHandler::encodeMessage (vector<string> msgToEncode){
 }
 
 bool ConnectionHandler::decodeError(std::string &frame) {
-    frame.append("ERROR");
+    frame.append("ERROR ");
     char OP_CODE_BYTES[2];
     try{
         if (!getBytes(OP_CODE_BYTES, 2)){
@@ -312,7 +276,7 @@ bool ConnectionHandler::decodeError(std::string &frame) {
 }
 
 bool ConnectionHandler::decodeAck(std::string &frame) {
-    frame.append("ACK");
+    frame.append("ACK ");
     char OP_CODE_BYTES[2];
     try{
         if (!getBytes(OP_CODE_BYTES, 2)){
@@ -321,7 +285,13 @@ bool ConnectionHandler::decodeAck(std::string &frame) {
         short OP_CODE = bytesToShort(OP_CODE_BYTES);
         frame.append(std::to_string(OP_CODE));
         if (OP_CODE >= KDAMCHECK & OP_CODE != UNREGISTER){
+            frame.append(" ");
             return continueProcess(frame);
+        }
+        else{
+            if (!getBytes(OP_CODE_BYTES, 1)){
+                return false;
+            }
         }
         return true;
     }catch (std::exception& e) {
@@ -336,7 +306,7 @@ bool ConnectionHandler::continueProcess(std::string &frame) {
         if (!getBytes(ch, 1))
             return false;
         if (ch[0] != '\0')
-            frame.append(std::to_string(ch[0]));
+            frame.append(1,ch[0]);
     }while (ch[0] != '\0');
     return true;
 }

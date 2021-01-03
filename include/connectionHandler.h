@@ -51,14 +51,6 @@ public:
     // Close down the connection properly.
     void close();
 
-    const string& getHost() const;
-
-    const short& getPort() const;
-
-    const boost::asio::io_service& getIOService() const;
-
-    const tcp::socket& getSocket() const;
-
 private:
     short ADMINREG = 1;
     short STUDENTREG = 2;

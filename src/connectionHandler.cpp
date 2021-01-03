@@ -100,6 +100,8 @@ bool ConnectionHandler::sendFrameUTF8(const std::string& frame, char delimiter) 
     string separator(1,delimiter);
     boost::split(msgToEncode, frame, boost::is_any_of(separator));
     vector<char> msg = encodeMessage(msgToEncode);
+    if (msg.empty())
+        return false;
     int size = msg.size();
     char message[size];
     for (int i = 0; i < size; ++i) {
@@ -252,7 +254,7 @@ vector<char> ConnectionHandler::whichOPCODE(vector<string>& message) {
     else if (op_code == "MYCOURSES")
         return myCourses(message);
     else
-        throw "Unsupported operation";
+        return vector<char>(0);
 }
 
 vector<char> ConnectionHandler::encodeMessage (vector<string> msgToEncode){
@@ -309,20 +311,4 @@ bool ConnectionHandler::continueProcess(std::string &frame) {
             frame.append(1,ch[0]);
     }while (ch[0] != '\0');
     return true;
-}
-
-const boost::asio::io_service& ConnectionHandler::getIOService() const{
-    return io_service_;
-}
-
-const string &ConnectionHandler::getHost() const{
-    return host_;
-}
-
-const short &ConnectionHandler::getPort() const{
-    return port_;
-}
-
-const tcp::socket &ConnectionHandler::getSocket() const{
-    return socket_;
 }

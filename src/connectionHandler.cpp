@@ -1,5 +1,7 @@
 #include "../include/connectionHandler.h"
 using boost::asio::ip::tcp;
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 using std::cin;
 using std::cout;
@@ -72,81 +74,66 @@ bool ConnectionHandler::getLine(std::string& line) {
 }
 
 bool ConnectionHandler::sendLine(std::string& line) {
-    return sendFrameAscii(line, '\n');
+    return sendFrameAscii(line, ' ');
 }
-
 
 bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
     cout<< "1" << endl;
-    char ch;
+    char ch[2];
     // Stop when we encounter the null character.
     // Notice that the null character is not appended to the frame string.
     try {
         cout<< "2" << endl;
 
         short op_code = 0;
-        if(!getBytes(&ch, 2))
+        if(!getBytes(ch, 2))
         {
             cout<< "3" << endl;
-
             return false;
         }
-        cout<< "4 " << op_code << endl;
-        op_code = bytesToShort(&ch);
+        cout<< "4 "  << endl;
+        op_code = bytesToShort(ch);
         cout<<op_code<<endl;
         if (op_code==13){
-            cout<< "5" << endl;
-            frame.append("ERROR ");
-            cout<< frame << endl;
-            cout<< "shayke habozeah" << endl;
-            char ch2;
-            if(!getBytes(&ch2, 2))
-            {
-                cout<< "6" << endl;
-
-                return false;
-            }
-            short message = bytesToShort(&ch2);
-            frame.append(std::to_string(message));
-            cout<<message<<endl;
-            cout<<frame<<endl;
+            return decodeError(frame);
         } else{
-            cout<< "7" << endl;
-            char ch2;
-            frame.append("ACK ");
-            if(!getBytes(&ch2, 2))
-            {
-                cout<< "8" << endl;
-
-                return false;
-            }
-            short message = bytesToShort(&ch2);
-            frame.append(std::to_string(message)+" ");
-            do{
-                cout<<"meleh"<<endl;
-                if(!getBytes(&ch, 1))
-                {
-                    cout<< "9" << endl;
-                    return false;
-                }
-                if(ch!='\0'){
-                    cout<< "10" << endl;
-                    frame.append(1, ch);
-                }
-                cout<< "11" << endl;
-            }while (delimiter != ch);
+            return decodeAck(frame);
+//            cout<< "7" << endl;
+//            char ch2;
+//            frame.append("ACK ");
+//            if(!getBytes(&ch2, 2))
+//            {
+//                cout<< "8" << endl;
+//
+//                return false;
+//            }
+//            short message = bytesToShort(&ch2);
+//            frame.append(std::to_string(message)+" ");
+//            do{
+//                cout<<"meleh"<<endl;
+//                if(!getBytes(&ch, 1))
+//                {
+//                    cout<< "9" << endl;
+//                    return false;
+//                }
+//                if(ch!='\0'){
+//                    cout<< "10" << endl;
+//                    frame.append(1, ch);
+//                }
+//                cout<< "11" << endl;
+//            }while (delimiter != ch);
         }
     } catch (std::exception& e) {
         std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
         return false;
     }
-    cout<< "got " << frame << endl;
-    return true;
 }
 
-
 bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter) {
-    vector<char> msg = messageToByte(frame);
+    vector<string> msgToEncode;
+    string separator(1,delimiter);
+    boost::split(msgToEncode, frame, boost::is_any_of(separator));
+    vector<char> msg = encodeMessage(msgToEncode);
     int size = msg.size();
     char message[size];
     for (int i = 0; i < size; ++i) {
@@ -180,253 +167,104 @@ void ConnectionHandler::shortToBytes(short num, char *bytesArr) {
     bytesArr[1] = (num & 0xFF);
 }
 
-vector<char> ConnectionHandler::adminReg(const std::string& message) {
-    char* username = "";
-    char* password = "";
-    int len = 2;
-    int usernameLen = 0;
-    int passwordLen = 0;
-    bool usernamebool = true;
-    for (int i = 9; i < message.length(); ++i) {
-        if (message[i]!=' ') {
-            if (usernamebool) {
-                usernameLen++;
-                username += message[i];
-            }
-            else {
-                passwordLen++;
-                password += message[i];
-            }
-        }
-        else
-            usernamebool = false;
+vector<char> ConnectionHandler::createMsg2args(vector<string>& message, short OP_CODE ){
+    vector<char> output;
+    char bytes[2];
+    shortToBytes(OP_CODE,bytes);
+    output.push_back(bytes[0]);
+    output.push_back(bytes[1]);
+    string& username = message[1];
+    for(int i=0;i<username.length();i++){
+        output.push_back(username[i]);
     }
-    len += usernameLen+passwordLen+2;   //2 start bytes, username and password len and 2 '0' bytes
-    char output1[len];
-    shortToBytes(1,output1);
-    for (int i = 0; i < usernameLen; ++i) {
-        output1[i+2] = username[i];
+    output.push_back('\0');
+    string& password = message[2];
+    for(int i=0; i<password.length();i++){
+        output.push_back(password[i]);
     }
-    output1[usernameLen+2] = '\0';
-    for (int i = 0; i < usernameLen; ++i) {
-        output1[i+3+usernameLen] = username[i];
-    }
-    output1[len-1] = '\0';
-    vector<char> output(0);
-    for (int i = 0; i < len ; ++i) {
-        output.push_back(output1[i]);
-    }
+    output.push_back('\0');
     return output;
 }
 
-vector<char> ConnectionHandler::studentReg(const std::string& message) {
-    char* username = "";
-    char* password = "";
-    int len = 2;
-    int usernameLen = 0;
-    int passwordLen = 0;
-    bool usernamebool = true;
-    for (int i = 9; i < message.length(); ++i) {
-        if (message[i]!=' ') {
-            if (usernamebool) {
-                usernameLen++;
-                username += message[i];
-            }
-            else {
-                passwordLen++;
-                password += message[i];
-            }
-        }
-        else
-            usernamebool = false;
-    }
-    len += usernameLen+passwordLen+2;   //2 start bytes, username and password len and 2 '0' bytes
-    char output1[len];
-    shortToBytes(2, output1);
-    for (int i = 0; i < usernameLen; ++i) {
-        output1[i + 2] = username[i];
-    }
-    output1[usernameLen + 2] = '\0';
-    for (int i = 0; i < usernameLen; ++i) {
-        output1[i + 3 + usernameLen] = username[i];
-    }
-    output1[len-1] = '\0';
-    vector<char> output(0);
-    for (int i = 0; i < len; ++i) {
-        output.push_back(output1[i]);
-    }
+vector<char> ConnectionHandler::createMsg1arg(vector<string>& message, short OP_CODE){
+    vector<char> output;
+    char bytes[2];
+    shortToBytes(OP_CODE,bytes);
+    output.push_back(bytes[0]);
+    output.push_back(bytes[1]);
+    short courseNumber = boost::lexical_cast<short>(message[1]);
+    shortToBytes(courseNumber,bytes);
+    output.push_back(bytes[0]);
+    output.push_back(bytes[1]);
     return output;
 }
 
-vector<char> ConnectionHandler::login(const std::string& message) {
-    char* username = "";
-    char* password = "";
-    int len = 2;
-    int usernameLen = 0;
-    int passwordLen = 0;
-    bool usernamebool = true;
-    for (int i = 9; i < message.length(); ++i) {
-        if (message[i]!=' ') {
-            if (usernamebool) {
-                usernameLen++;
-                username += message[i];
-            }
-            else {
-                passwordLen++;
-                password += message[i];
-            }
-        }
-        else
-            usernamebool = false;
-    }
-    len += usernameLen+passwordLen+2;   //2 start bytes, username and password len and 2 '0' bytes
-    char output1[len];
-    shortToBytes(3, output1);
-    for (int i = 0; i < usernameLen; ++i) {
-        output1[i + 2] = username[i];
-    }
-    output1[usernameLen + 2] = '\0';
-    for (int i = 0; i < usernameLen; ++i) {
-        output1[i + 3 + usernameLen] = username[i];
-    }
-    output1[len-1] = '\0';
+vector<char> ConnectionHandler::adminReg(vector<string>& message) {
+    return createMsg2args(message,ADMINREG);
+}
+
+vector<char> ConnectionHandler::studentReg(vector<string>& message) {
+    return createMsg2args(message,STUDENTREG);
+}
+
+vector<char> ConnectionHandler::login(vector<string>& message) {
+    return createMsg2args(message,LOGIN);
+}
+
+vector<char> ConnectionHandler::logout(vector<string>& message) {
     vector<char> output(0);
-    for (int i = 0; i < len; ++i) {
-        output[i] = output1[i];
-    }
+    char bytes[2];
+    shortToBytes(LOGOUT,bytes);
+    output.push_back(bytes[0]);
+    output.push_back(bytes[1]);
     return output;
 }
 
-vector<char> ConnectionHandler::logout(const std::string& message) {
+vector<char> ConnectionHandler::courseReg(vector<string>& message) {
+    return createMsg1arg(message,COURSEREG);
+}
+
+vector<char> ConnectionHandler::kdamCheck(vector<string>& message) {
+    return createMsg1arg(message,KDAMCHECK);
+}
+
+vector<char> ConnectionHandler::courseStat(vector<string>& message) {
+    return createMsg1arg(message,COURSESTAT);
+}
+
+vector<char> ConnectionHandler::studentStat(vector<string>& message) {
+    vector<char> output;
+    char bytes[2];
+    shortToBytes(STUDENTSTAT,bytes);
+    output.push_back(bytes[0]);
+    output.push_back(bytes[1]);
+    string& username = message[1];
+    for(int i=0;i<username.length();i++){
+        output.push_back(username[i]);
+    }
+    output.push_back('\0');
+    return output;
+}
+
+vector<char> ConnectionHandler::isRegistered(vector<string>& message) {
+    return createMsg1arg(message,ISREGIDTERED);
+}
+
+vector<char> ConnectionHandler::unRegistered(vector<string>& message) {
+    return createMsg1arg(message,UNREGISTER);
+}
+
+vector<char> ConnectionHandler::myCourses(vector<string>& message) {
     vector<char> output(0);
     char output1[2];
-    shortToBytes(4,output1);
+    shortToBytes(MYCOURSES,output1);
     output.push_back(output1[0]);
     output.push_back(output1[1]);
     return output;
 }
 
-vector<char> ConnectionHandler::courseReg(const std::string& message) {
-    char* courseNumstr="";
-    for (int i = 10; i <message.length(); ++i) {
-        courseNumstr += message[i];
-    }
-    short courseNum = atoi(courseNumstr);
-    char output1[4];
-    shortToBytes(courseNum,output1);
-    output1[2]=output1[0];
-    output1[3]=output1[1];
-    shortToBytes(5,output1);
-    vector<char> output(0);
-    for (int i = 0; i < 4; ++i) {
-        output.push_back(output1[i]);
-    }
-    return output;
-}
-
-vector<char> ConnectionHandler::kdamCheck(const std::string& message) {
-    char* courseNumstr="";
-    for (int i = 10; i <message.length(); ++i) {
-        courseNumstr += message[i];
-    }
-    short courseNum = atoi(courseNumstr);
-    char output1[4];
-    shortToBytes(courseNum,output1);
-    output1[2]=output1[0];
-    output1[3]=output1[1];
-    shortToBytes(6,output1);
-    vector<char> output(0);
-    for (int i = 0; i < 4; ++i) {
-        output.push_back(output1[i]);
-    }
-    return output;
-}
-
-vector<char> ConnectionHandler::courseStat(const std::string& message) {
-    char* courseNumstr="";
-    for (int i = 11; i <message.length(); ++i) {
-        courseNumstr += message[i];
-    }
-    short courseNum = atoi(courseNumstr);
-    char output1[4];
-    shortToBytes(courseNum,output1);
-    output1[2]=output1[0];
-    output1[3]=output1[1];
-    shortToBytes(7,output1);
-    vector<char> output(0);
-    for (int i = 0; i < 4; ++i) {
-        output.push_back(output1[i]);
-    }
-    return output;
-}
-
-vector<char> ConnectionHandler::studentStat(const std::string& message) {
-    char* username = "";
-    int len = 2;
-    for (int i = 12; i <message.length(); ++i) {
-        username += message[i];
-        len++;
-    }
-    len++;
-    char output1[len];
-    shortToBytes(8,output1);
-    for (int i = 2; i < len-1; ++i) {
-        output1[i] = username[i-2];
-    }
-    output1[len-1] = '\0';
-    vector<char> output(0);
-    for (int i = 0; i < len; ++i) {
-        output.push_back(output1[i]);
-    }
-    return output;
-}
-
-vector<char> ConnectionHandler::isRegistered(const std::string& message) {
-    char* courseNumstr="";
-    for (int i = 13; i <message.length(); ++i) {
-        courseNumstr += message[i];
-    }
-    short courseNum = atoi(courseNumstr);
-    char output1[4];
-    shortToBytes(courseNum,output1);
-    output1[2]=output1[0];
-    output1[3]=output1[1];
-    shortToBytes(9,output1);
-    vector<char> output(0);
-    for (int i = 0; i < 4; ++i) {
-        output.push_back(output1[i]);
-    }
-    return output;
-}
-
-vector<char> ConnectionHandler::unRegistered(const std::string& message) {
-    char* courseNumstr="";
-    for (int i = 11; i <message.length(); ++i) {
-        courseNumstr += message[i];
-    }
-    short courseNum = atoi(courseNumstr);
-    char output1[4];
-    shortToBytes(courseNum,output1);
-    output1[2]=output1[0];
-    output1[3]=output1[1];
-    shortToBytes(10,output1);
-    vector<char> output(0);
-    for (int i = 0; i < 4; ++i) {
-        output.push_back(output1[i]);
-    }
-    return output;
-}
-
-vector<char> ConnectionHandler::myCourses(const std::string& message) {
-    vector<char> output(0);
-    char output1[2];
-    shortToBytes(11,output1);
-    output.push_back(output1[0]);
-    output.push_back(output1[1]);
-    return output;
-}
-
-vector<char> ConnectionHandler::whichOPCODE(string &op_code, const std::string& message) {
+vector<char> ConnectionHandler::whichOPCODE(vector<string>& message) {
+    string& op_code = message[0];
     if (op_code == "ADMINREG")
         return adminReg(message);
     else if (op_code == "STUDENTREG")
@@ -447,17 +285,58 @@ vector<char> ConnectionHandler::whichOPCODE(string &op_code, const std::string& 
         return isRegistered(message);
     else if (op_code == "UNREGISTERED")
         return unRegistered(message);
-    else
+    else if (op_code == "MYCOURSES")
         return myCourses(message);
+    else
+        throw "Unsupported operation";
 }
 
-vector<char> ConnectionHandler::messageToByte (const std::string& message){
-    string op_code;
-    for (int i = 0; i <message.length() ; ++i) {
-        if (message[i] != ' ')
-            op_code = op_code+message[i];
-        else
-            break;
+vector<char> ConnectionHandler::encodeMessage (vector<string> msgToEncode){
+    return whichOPCODE(msgToEncode);
+}
+
+bool ConnectionHandler::decodeError(std::string &frame) {
+    frame.append("ERROR");
+    char OP_CODE_BYTES[2];
+    try{
+        if (!getBytes(OP_CODE_BYTES, 2)){
+            return false;
+        }
+        short OP_CODE = bytesToShort(OP_CODE_BYTES);
+        frame.append(std::to_string(OP_CODE));
+        return true;
+    }catch (std::exception& e) {
+        std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
+        return false;
     }
-    return whichOPCODE(op_code,message);
+}
+
+bool ConnectionHandler::decodeAck(std::string &frame) {
+    frame.append("ACK");
+    char OP_CODE_BYTES[2];
+    try{
+        if (!getBytes(OP_CODE_BYTES, 2)){
+            return false;
+        }
+        short OP_CODE = bytesToShort(OP_CODE_BYTES);
+        frame.append(std::to_string(OP_CODE));
+        if (OP_CODE >= KDAMCHECK & OP_CODE != UNREGISTER){
+            return continueProcess(frame);
+        }
+        return true;
+    }catch (std::exception& e) {
+        std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
+        return false;
+    }
+}
+
+bool ConnectionHandler::continueProcess(std::string &frame) {
+    char ch[1];
+    do {
+        if (!getBytes(ch, 1))
+            return false;
+        if (ch[0] != '\0')
+            frame.append(std::to_string(ch[0]));
+    }while (ch[0] != '\0');
+    return true;
 }

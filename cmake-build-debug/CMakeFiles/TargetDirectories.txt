@@ -1,0 +1,3 @@
+/home/nevo/CLionProjects/BGRSclient/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/nevo/CLionProjects/BGRSclient/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/nevo/CLionProjects/BGRSclient/cmake-build-debug/CMakeFiles/BGRSclient.dir

@@ -38,7 +38,6 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
     boost::system::error_code error;
     try {
         while (!error && bytesToRead > tmp ) {
-            int i =0;
             tmp += socket_.read_some(boost::asio::buffer(bytes+tmp, bytesToRead-tmp), error);
         }
         if(error)
@@ -140,12 +139,12 @@ vector<char> ConnectionHandler::createMsg2args(vector<string>& message, short OP
     output.push_back(bytes[0]);
     output.push_back(bytes[1]);
     string& username = message[1];
-    for(int i=0;i<username.length();i++){
+    for(unsigned int i=0;i<username.length();i++){
         output.push_back(username[i]);
     }
     output.push_back('\0');
     string& password = message[2];
-    for(int i=0; i<password.length();i++){
+    for(unsigned int i=0; i<password.length();i++){
         output.push_back(password[i]);
     }
     output.push_back('\0');
@@ -205,7 +204,7 @@ vector<char> ConnectionHandler::studentStat(vector<string>& message) {
     output.push_back(bytes[0]);
     output.push_back(bytes[1]);
     string& username = message[1];
-    for(int i=0;i<username.length();i++){
+    for(unsigned int i=0;i<username.length();i++){
         output.push_back(username[i]);
     }
     output.push_back('\0');
@@ -286,7 +285,7 @@ bool ConnectionHandler::decodeAck(std::string &frame) {
         }
         short OP_CODE = bytesToShort(OP_CODE_BYTES);
         frame.append(std::to_string(OP_CODE));
-        if (OP_CODE >= KDAMCHECK & OP_CODE != UNREGISTER){
+        if ((OP_CODE >= KDAMCHECK) & (OP_CODE != UNREGISTER)){
             frame.append(" ");
             return continueProcess(frame);
         }

@@ -63,10 +63,10 @@ RM = /home/nevo/Documents/clion-2020.2.4/bin/cmake/linux/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nevo/CLionProjects/BGRSclient
+CMAKE_SOURCE_DIR = /home/nevo/CLionProjects/Client
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nevo/CLionProjects/BGRSclient/cmake-build-debug
+CMAKE_BINARY_DIR = /home/nevo/CLionProjects/Client/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/BGRSclient.dir/depend.make
@@ -79,29 +79,29 @@ include CMakeFiles/BGRSclient.dir/flags.make
 
 CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o: CMakeFiles/BGRSclient.dir/flags.make
 CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o: ../src/BGRSclient.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nevo/CLionProjects/BGRSclient/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o -c /home/nevo/CLionProjects/BGRSclient/src/BGRSclient.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nevo/CLionProjects/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o -c /home/nevo/CLionProjects/Client/src/BGRSclient.cpp
 
 CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nevo/CLionProjects/BGRSclient/src/BGRSclient.cpp > CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nevo/CLionProjects/Client/src/BGRSclient.cpp > CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.i
 
 CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nevo/CLionProjects/BGRSclient/src/BGRSclient.cpp -o CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nevo/CLionProjects/Client/src/BGRSclient.cpp -o CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.s
 
 CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o: CMakeFiles/BGRSclient.dir/flags.make
 CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o: ../src/connectionHandler.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nevo/CLionProjects/BGRSclient/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o -c /home/nevo/CLionProjects/BGRSclient/src/connectionHandler.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nevo/CLionProjects/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o -c /home/nevo/CLionProjects/Client/src/connectionHandler.cpp
 
 CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nevo/CLionProjects/BGRSclient/src/connectionHandler.cpp > CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nevo/CLionProjects/Client/src/connectionHandler.cpp > CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.i
 
 CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nevo/CLionProjects/BGRSclient/src/connectionHandler.cpp -o CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nevo/CLionProjects/Client/src/connectionHandler.cpp -o CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.s
 
 # Object files for target BGRSclient
 BGRSclient_OBJECTS = \
@@ -115,7 +115,7 @@ BGRSclient: CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o
 BGRSclient: CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o
 BGRSclient: CMakeFiles/BGRSclient.dir/build.make
 BGRSclient: CMakeFiles/BGRSclient.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nevo/CLionProjects/BGRSclient/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable BGRSclient"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nevo/CLionProjects/Client/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable BGRSclient"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/BGRSclient.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -128,6 +128,6 @@ CMakeFiles/BGRSclient.dir/clean:
 .PHONY : CMakeFiles/BGRSclient.dir/clean
 
 CMakeFiles/BGRSclient.dir/depend:
-	cd /home/nevo/CLionProjects/BGRSclient/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nevo/CLionProjects/BGRSclient /home/nevo/CLionProjects/BGRSclient /home/nevo/CLionProjects/BGRSclient/cmake-build-debug /home/nevo/CLionProjects/BGRSclient/cmake-build-debug /home/nevo/CLionProjects/BGRSclient/cmake-build-debug/CMakeFiles/BGRSclient.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/nevo/CLionProjects/Client/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nevo/CLionProjects/Client /home/nevo/CLionProjects/Client /home/nevo/CLionProjects/Client/cmake-build-debug /home/nevo/CLionProjects/Client/cmake-build-debug /home/nevo/CLionProjects/Client/cmake-build-debug/CMakeFiles/BGRSclient.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/BGRSclient.dir/depend
 

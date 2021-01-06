@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/nevo/CLionProjects/Client/src/BGRSclient.cpp" "/home/nevo/CLionProjects/Client/cmake-build-debug/CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o"
-  "/home/nevo/CLionProjects/Client/src/connectionHandler.cpp" "/home/nevo/CLionProjects/Client/cmake-build-debug/CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o"
+  "/home/nevo/ronracheb/Client/src/BGRSclient.cpp" "/home/nevo/ronracheb/Client/cmake-build-debug/CMakeFiles/BGRSclient.dir/src/BGRSclient.cpp.o"
+  "/home/nevo/ronracheb/Client/src/connectionHandler.cpp" "/home/nevo/ronracheb/Client/cmake-build-debug/CMakeFiles/BGRSclient.dir/src/connectionHandler.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

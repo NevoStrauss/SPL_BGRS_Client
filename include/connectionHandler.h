@@ -15,6 +15,7 @@ private:
     const short port_;
     boost::asio::io_service io_service_;   // Provides core I/O functionality
     tcp::socket socket_;
+    std::promise<bool> promise;
 
 public:
     ConnectionHandler(std::string host, short port);
@@ -50,6 +51,12 @@ public:
 
     // Close down the connection properly.
     void close();
+
+    std::promise<bool>& getPromise();
+
+    void setPromise(bool toSet);
+
+    void resetPromise();
 
 private:
     short ADMINREG = 1;

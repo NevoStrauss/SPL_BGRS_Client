@@ -1,5 +1,6 @@
 #include "../include/connectionHandler.h"
 using boost::asio::ip::tcp;
+using namespace std;
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -10,7 +11,11 @@ using std::endl;
 using std::string;
 
 
-ConnectionHandler::ConnectionHandler(string host, short port): host_(host), port_(port), io_service_(), socket_(io_service_){}
+ConnectionHandler::ConnectionHandler(string host, short port): host_(host),
+                                                                port_(port),
+                                                                io_service_(),
+                                                                socket_(io_service_),
+                                                                promise(std::promise<bool>()){}
 
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -79,9 +84,7 @@ bool ConnectionHandler::getFrameUTF8(std::string& frame, char delimiter) {
 
         short op_code;
         if(!getBytes(ch, 2))
-        {
             return false;
-        }
         op_code = bytesToShort(ch);
         if (op_code==13){
             return decodeError(frame);
@@ -275,8 +278,8 @@ bool ConnectionHandler::decodeError(std::string &frame) {
         return false;
     }
 }
-
 bool ConnectionHandler::decodeAck(std::string &frame) {
+
     frame.append("ACK ");
     char OP_CODE_BYTES[2];
     try{
@@ -286,7 +289,7 @@ bool ConnectionHandler::decodeAck(std::string &frame) {
         short OP_CODE = bytesToShort(OP_CODE_BYTES);
         frame.append(std::to_string(OP_CODE));
         if ((OP_CODE >= KDAMCHECK) & (OP_CODE != UNREGISTER)){
-            frame.append(" ");
+            frame.append("\n");
             return continueProcess(frame);
         }
         else{
@@ -311,3 +314,8 @@ bool ConnectionHandler::continueProcess(std::string &frame) {
     }while (ch[0] != '\0');
     return true;
 }
+promise<bool>& ConnectionHandler::getPromise() {return promise;}
+
+void ConnectionHandler::setPromise(bool toSet) {promise.set_value(toSet);}
+
+void ConnectionHandler::resetPromise() {promise = std::promise<bool>();}

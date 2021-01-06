@@ -13,7 +13,6 @@ public:
             char buf[bufsize];
             std::cin.getline(buf, bufsize);
             std::string line(buf);
-//            cout <<line << endl;
             if (!connectionHandler.sendLine(line)) {
                 std::cout << "Disconnected. Exiting...\n" << std::endl;
                 break;
